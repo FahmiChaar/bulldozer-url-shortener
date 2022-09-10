@@ -37,7 +37,7 @@ const submit = () => {
             <v-text-field
                 label="Email"
                 type="email"
-                :error-messages="form.errors.email"
+                :error-messages="!form.email && form.errors.email"
                 v-model="form.email"
                 name="email"
                 append-icon="email"
@@ -47,7 +47,7 @@ const submit = () => {
             <v-text-field
                 label="Mot de passe"
                 type="password"
-                :error-messages="form.errors.password"
+                :error-messages="!form.password && form.errors.password"
                 v-model="form.password"
                 name="password"
                 class="w-full"
@@ -56,9 +56,9 @@ const submit = () => {
             ></v-text-field>
 
             <div class="flex items-center justify-end mt-4">
-                <inertia-link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900">
+                <Link v-if="canResetPassword" :href="route('password.request')" class="underline text-sm text-gray-600 hover:text-gray-900">
                     Mot de passe oublié?
-                </inertia-link>
+                </Link>
 
                 <v-btn type="submit" color="primary" class="ml-4 capitalize" :loading="form.processing" :disabled="form.processing">
                     Connexion

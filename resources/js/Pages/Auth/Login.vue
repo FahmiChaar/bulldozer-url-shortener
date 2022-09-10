@@ -1,10 +1,5 @@
 <script setup>
-import BreezeButton from '@/Components/Button.vue';
-import BreezeCheckbox from '@/Components/Checkbox.vue';
 import BreezeGuestLayout from '@/Layouts/Guest.vue';
-import BreezeInput from '@/Components/Input.vue';
-import BreezeInputError from '@/Components/InputError.vue';
-import BreezeLabel from '@/Components/Label.vue';
 import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
 
 defineProps({
@@ -27,7 +22,7 @@ const submit = () => {
 
 <template>
     <BreezeGuestLayout>
-        <Head title="Log in" />
+        <Head title="Connexion" />
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
             {{ status }}

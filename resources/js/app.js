@@ -9,6 +9,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import { createVuetify } from 'vuetify'
 import { aliases, md } from 'vuetify/iconsets/md'
+import $bus from './events'
 
 const vuetify = createVuetify({
     icons: {
@@ -36,8 +37,9 @@ createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, app, props, plugin }) {
-        return createApp({ render: () => h(app, props) })
-            .use(plugin)
+        const vueApp = createApp({ render: () => h(app, props) })
+        vueApp.config.globalProperties.$bus = $bus
+        vueApp.use(plugin)
             .use(ZiggyVue, Ziggy)
             .use(vuetify)
             .mount(el);

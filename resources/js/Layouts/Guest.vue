@@ -1,12 +1,13 @@
 <script setup>
-import BreezeApplicationLogo from '@/Components/ApplicationLogo.vue';
 import { Link } from '@inertiajs/inertia-vue3';
+import FlashMessages from './FlashMessages.vue'
 </script>
 
 <template>
     <v-app id="inspire" light v-cloak>
         <v-main>
             <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
+                <FlashMessages />
                 <div>
                     <Link href="/">
                         <div class="text-center w-full">

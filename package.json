@@ -20,7 +20,10 @@
         "vue": "^3.2.31"
     },
     "dependencies": {
+        "sortablejs": "^1.15.0",
         "vite-plugin-vuetify": "^1.0.0-alpha.15",
+        "vue-sweetalert2": "^5.0.5",
+        "vue3-runtime-template": "^1.0.2",
         "vuetify": "^3.0.0-beta.10"
     }
 }

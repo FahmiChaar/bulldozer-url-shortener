@@ -8,28 +8,12 @@ import { InertiaProgress } from '@inertiajs/progress';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import { createVuetify } from 'vuetify'
-import { aliases, md } from 'vuetify/iconsets/md'
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 import $bus from './events'
+import vuetifyConfig from './vuetify.config';
 
-const vuetify = createVuetify({
-    icons: {
-        defaultSet: 'md',
-        aliases,
-        sets: {
-            md,
-        }
-    },
-    theme: {
-        colors: {
-            primary: 'red',
-            secondary: '#03DAC6',
-            error: '#B00020',
-            info: '#2196F3',
-            success: '#4CAF50',
-            warning: '#FB8C00',
-        }
-    }
-})
+const vuetify = createVuetify(vuetifyConfig)
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Bulldozer Url Shortener';
 
@@ -42,8 +26,9 @@ createInertiaApp({
         vueApp.use(plugin)
             .use(ZiggyVue, Ziggy)
             .use(vuetify)
+            .use(VueSweetalert2)
             .mount(el);
     },
 });
 
-InertiaProgress.init({ color: '#4B5563' });
+InertiaProgress.init({ color: '#C18772' });

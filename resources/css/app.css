@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.v-field--single-line .v-field__input {
+    padding-top: 0 !important;
+}

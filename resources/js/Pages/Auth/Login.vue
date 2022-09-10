@@ -35,9 +35,10 @@ const submit = () => {
                 :error-messages="!form.email && form.errors.email"
                 v-model="form.email"
                 name="email"
-                append-icon="email"
+                append-inner-icon="email"
                 class="w-full"
-                outlined
+                variant="outlined"
+                color="primary"
             ></v-text-field>
             <v-text-field
                 label="Mot de passe"
@@ -46,8 +47,9 @@ const submit = () => {
                 v-model="form.password"
                 name="password"
                 class="w-full"
-                append-icon="lock"
-                outlined
+                append-inner-icon="lock"
+                variant="outlined"
+                color="primary"
             ></v-text-field>
 
             <div class="flex items-center justify-end mt-4">

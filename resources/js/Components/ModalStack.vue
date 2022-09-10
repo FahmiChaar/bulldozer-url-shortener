@@ -29,8 +29,31 @@ export default {
             modalStack: [],
             hasModals: false,
             persistAnimation: false,
-            persistAnimationTimeout: null
+            persistAnimationTimeout: null,
+            closeModalOnInertiaSuccess: true,
+            removeBeforeEventListener: () => {}
         }
+    },
+    beforeMount() {
+        this.$inertia.visitInModal = (url, closeOnSuccess = true, props) => {
+            this.closeModalOnInertiaSuccess = closeOnSuccess;
+            this.visitInModal(url, props);
+        }
+        this.$inertia.on("success", (event) => {
+            this.$bus.$emit('modal:inertia:success', event);
+            // remove the 'X-Inertia-Modal' and 'X-Inertia-Modal-Redirect-Back' headers for future requests
+            this.removeBeforeEventListener()
+           
+            if (this.closeModalOnInertiaSuccess) {
+                this.closeModal();
+            }
+        })
+        // this.$inertia.on("error", (event) => {
+        //     if (this.modalStack && this.modalStack.length) {
+        //         this.$bus.$emit('modal:inertia:error', event);
+        //         this.showErrors(event.detail?.errors)
+        //     }
+        // })
     },
     created: function() {
         document.addEventListener("keydown", (e) => {
@@ -40,18 +63,7 @@ export default {
             }
         })
         this.$bus.$on('modal::show', data => {
-            if (typeof data === 'string') {
-                this.modalStack.push({component: data, props: {}, options: {}})
-                this.hasModals = true
-            }else if (typeof data === 'object') {
-                data.props = data.props || {}
-                data.options = data.options || {}
-                this.modalStack.push(data)
-                this.hasModals = true
-            }else {
-                this.hasModals = false
-                throw 'Data passed to Modal component should be of type string|object'
-            }
+            this.showModal(data)
         })
         this.$bus.$on('modal::close', component => {
             this.closeModal(component)
@@ -64,8 +76,23 @@ export default {
                 document.removeEventListener("keydown", (e) => {})
             }
         },
+        showModal(data) {
+            if (typeof data === 'string') {
+                this.modalStack.push({component: data, props: {}, options: {}})
+                this.hasModals = true
+            }else if (typeof data === 'object') {
+                data.props = data.props || {}
+                data.options = data.options || {}
+                this.modalStack.push(data)
+                this.hasModals = true
+            }else {
+                this.hasModals = false
+                throw 'Data passed to Modal component should be of type string|object'
+            }
+        },
         closeModal(component, persist) {
             if (!persist) {
+                this.removeBeforeEventListener()
                 if (component) {
                     // I reverse modalStack to findLastIndex
                     const componentIndex = this.modalStack.reverse().findIndex(m => m.component === component)
@@ -91,6 +118,45 @@ export default {
                 this.persistAnimationTimeout = setTimeout(() => {
                     this.persistAnimation = false
                 }, 160);
+            }
+        },
+        visitInModal(url, modalProps) {
+            return new Promise(async (resolve) => {
+                const Inertia = this.$inertia
+                const { data: { component, props, options } } = await axios({
+                    method: 'get',
+                    url,
+                    headers: {
+                        Accept: "text/html, application/xhtml+xml",
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-Inertia": true,
+                        "X-Inertia-Modal": true,
+                        "X-Inertia-Version": this.$page.version,
+                    },
+                })
+                const resolvedComponent = await Inertia.resolveComponent(component)
+                this.removeBeforeEventListener = Inertia.on("before", (event) => {
+                    // make sure the backend knows we're requesting from within a modal
+                    event.detail.visit.headers["X-Inertia-Modal"] = true;
+                    event.detail.visit.headers[
+                        "X-Inertia-Modal-Redirect-Back"
+                    ] = true;
+                })
+                this.showModal({
+                    component: resolvedComponent,
+                    props: {...props, ...modalProps},
+                    options
+                })
+                resolve(true)
+            })
+        },
+        showErrors(errors) {
+            if (errors && Object.keys(errors).length) {
+                let messages = ''
+                for (let key in errors) {
+                    messages += errors[key] + '\n'
+                }
+                this.$toast.error(messages)
             }
         }
     },

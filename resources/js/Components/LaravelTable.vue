@@ -1,5 +1,6 @@
 <script setup>
 import { Link } from '@inertiajs/inertia-vue3';
+import VRuntimeTemplate from "vue3-runtime-template";
 </script>
 
 <template>
@@ -27,51 +28,62 @@ import { Link } from '@inertiajs/inertia-vue3';
             </slot>
         </div>
         <slot name="before-table" :selectedRows="selectedRows"></slot>
-        <v-data-table
-            :headers="headers"
-            :items="query.data"
-            :server-items-length="query.total"
-            :loading="loading"
-            :options="options"
-            v-sortable-data-table
-            :show-select="selectable"
-            v-model="selectedRows"
-            @sorted="saveOrder"
-            hide-default-footer
+        <v-table
             class="shadow"
         >
-            <template #item="{item}">
-                <tr :class="[item.cssClass, {'bg-yellow-100': isItemSelected(item)}]">
+            <thead>
+                <tr>
+                    <th class="text-left" v-for="col in headers" :key="col.key">
+                        {{ col.text }}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in query.data" :key="item.id" :class="[item.cssClass, {'bg-yellow-100': isItemSelected(item)}]">
                     <td v-if="selectable">
                         <v-checkbox hide-details v-if="!item.notSelectable" color="primary" v-model="selectedRows" :value="item"></v-checkbox>
                     </td>
                     <td v-for="(col, index) in headers"
                         :key="index"
                     >
-                        <v-runtime-template v-if="col.key != 'actions'"
+                        <VRuntimeTemplate v-if="col.key != 'actions'"
                             :template="'<div>'+getColValue(item, col.key)+'</div>'">
-                        </v-runtime-template>
+                        </VRuntimeTemplate>
                         <template v-else>
                             <template v-if="(datatable && datatable.isInertia || datatable && datatable.inertiaView) && !hideActions">
                                 <v-tooltip left>
                                     <template v-slot:activator="{ on, attrs }">
-                                        <Link v-if="showAction('show')" as="v-btn" icon small color="default" :href="route('dashboard.'+datatable.inertiaView+'.show', item.id)">
-                                            <v-icon v-bind="attrs" v-on="on">remove_red_eye</v-icon>
-                                        </Link>
+                                        <template v-if="showAction('show')">
+                                            <v-btn variant="icon" color="default" v-if="showActionModal('show')" @click="showPageAsModal(route('dashboard.'+datatable.inertiaView+'.show', item.id)+(showParams || ''), item, 'show')" :loading="item.showLoading">
+                                                <v-icon v-bind="attrs" v-on="on">remove_red_eye</v-icon>
+                                            </v-btn>
+                                            <Link v-else :href="route('dashboard.'+datatable.inertiaView+'.show', item.id)">
+                                                <v-btn variant="icon" color="default">
+                                                    <v-icon v-bind="attrs" v-on="on">remove_red_eye</v-icon>
+                                                </v-btn>
+                                            </Link>
+                                        </template>
                                     </template>
                                     <span>Show details</span>
                                 </v-tooltip>
                                 <v-tooltip left>
                                     <template v-slot:activator="{ on, attrs }">
-                                        <Link v-if="showAction('edit')" as="v-btn" icon small color="default" :href="route('dashboard.'+datatable.inertiaView+'.edit', item.id)">
-                                            <v-icon v-bind="attrs" v-on="on">edit</v-icon>
-                                        </Link>
+                                        <template v-if="showAction('edit')">
+                                            <v-btn variant="icon" color="default" v-if="showActionModal('edit')" @click="showPageAsModal(route('dashboard.'+datatable.inertiaView+'.edit', item.id)+(editParams || ''), item, 'edit')" :loading="item.editLoading">
+                                                <v-icon v-bind="attrs" v-on="on">edit</v-icon>
+                                            </v-btn>
+                                            <Link v-else :href="route('dashboard.'+datatable.inertiaView+'.edit', item.id)">
+                                                <v-btn variant="icon" color="default">
+                                                    <v-icon v-bind="attrs" v-on="on">edit</v-icon>
+                                                </v-btn>
+                                            </Link>
+                                        </template>
                                     </template>
                                     <span>Edit</span>
                                 </v-tooltip>
                                 <v-tooltip left>
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-btn v-if="showAction('delete')" icon small color="default" @click="deleteRow(item.id)">
+                                        <v-btn v-if="showAction('delete')" variant="icon" color="error" @click="deleteRow(item.id)">
                                             <v-icon v-bind="attrs" v-on="on">delete</v-icon>
                                         </v-btn>
                                     </template>
@@ -82,8 +94,8 @@ import { Link } from '@inertiajs/inertia-vue3';
                         </template>
                     </td>
                 </tr>
-            </template>
-        </v-data-table>
+            </tbody>
+        </v-table>
         <div class="text-xs-center pt-2" v-if='query.last_page > 1'>
             <v-pagination @input="getDataFromApi" v-model="options.page" :length="query.last_page"></v-pagination>
         </div>
@@ -91,7 +103,6 @@ import { Link } from '@inertiajs/inertia-vue3';
 </template>
 
 <script>
-import VRuntimeTemplate from "vue3-runtime-template";
 import { Sortable } from 'sortablejs'
 export default {
     props: [
@@ -106,6 +117,7 @@ export default {
         'hideSearche',
         'hideCreate',
         'hideActions',
+        'actionsModal',
         'actions',
         'searchTerm'
     ],
@@ -121,6 +133,7 @@ export default {
             filters: this.sortable,
             selectedRows: [],
             options: {},
+            page: this.data ? this.data.query.current_page : 1,
             datatable: this.data,
             model: this.data ? this.data.model : null,
             query: this.data && this.data.query || {},
@@ -129,12 +142,6 @@ export default {
         }
     },
     watch: {
-        search: _.debounce(function(){
-            this.getDataFromApi(this.options.page);
-        }, 500),
-        data: function(newValue) {
-            this.initData(newValue)
-        },
         options: {
             handler (newOptions, oldOptions) {
                 if (oldOptions.sortBy) {
@@ -143,7 +150,7 @@ export default {
                         (newOptions.sortDesc[0] != oldOptions.sortDesc[0])
                     ) {
                         const sortParam = newOptions.sortDesc[0] == false ? `sort=${newOptions.sortBy[0]}` : `sort=-${newOptions.sortBy[0]}`
-                        this.getDataFromApi(this.options.page, sortParam);
+                        this.getDataFromApi(this.page, sortParam);
                     }
                 }
             },
@@ -154,13 +161,16 @@ export default {
         if (this.datatable) {
             this.headers = this.createHeaders(this.datatable.headers)
         }
-        if (this.url) {
-            this.query = {}
-            await this.getDataFromApi()
-            this.headers = this.createHeaders(this.ajaxHeader)
-        }
+        // if (this.url) {
+        //     this.query = {}
+        //     await this.getDataFromApi()
+        //     this.headers = this.createHeaders(this.ajaxHeader)
+        // }
+        const { page, search } = this.getParams()
+        this.page = Number(page || 1)
+        this.search = search
         this.$bus.$on('datatable:refresh', async (params)=> {
-            await this.getDataFromApi(this.options.page, params);
+            await this.getDataFromApi(this.page, params);
             this.$bus.$emit('datatable:refresh:success')
         })
         Array.prototype.move = function (from, to) {
@@ -186,20 +196,27 @@ export default {
         }
     },
     methods: {
+        onSearch: _.debounce(function(query) {
+            this.search = query
+            this.page = 1
+            this.getDataFromApi(this.page);
+        }, 800),
         isItemSelected(item) {
             return this.selectedRows.findIndex(r => r.id === item.id) > -1
         },
         async deleteRow(id) {
             const {value} = await this.$swal({
-                title: 'Are you sure you want to delete this',
+                title: 'Êtes-vous sûr de vouloir le supprimer',
                 // text: this.confirmMessage,
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'No'
+                confirmButtonText: 'Oui',
+                cancelButtonText: 'Non'
             })
             if (value) {
-                this.$inertia.delete(this.route('dashboard.'+this.datatable.inertiaView+'.destroy', id))
+                this.$inertia.delete(this.route('dashboard.'+this.datatable.inertiaView+'.destroy', id), {
+                    onSuccess: () => this.getDataFromApi(this.page)
+                })
             }
         },
         createHeaders(headers) {
@@ -235,6 +252,21 @@ export default {
                 return true
             }
         },
+        showActionModal(action) {
+            if (this.actionsModal && this.actionsModal.length) {
+                return this.actionsModal.indexOf(action) > -1
+            }else if (this.actionsModal && !this.actionsModal.length) {
+                return false
+            }else {
+                return false
+            }
+        },
+        async showPageAsModal(url, item, action) {
+            const loadingKey = `${action}Loading`
+            item[loadingKey] = true
+            await this.$inertia.visitInModal(url)
+            item[loadingKey] = false
+        },
         replaceParams(params) {
             const filterParams = this.getParams('http://test.com?'+this.filters)
             const filterKeys = Object.keys(filterParams)
@@ -243,6 +275,7 @@ export default {
                 filterParams[paramKey] = _params[paramKey]
             }
             let query = ''
+            const queryObject = {}
             for(let param in filterParams) {
                 if (
                     String(filterParams[param]) != 'null' && 
@@ -250,10 +283,11 @@ export default {
                     String(filterParams[param]) != 'undefined' && 
                     String(filterParams[param]) != '-undefined'
                 ) {
+                    queryObject[param] = filterParams[param]
                     query += `${param}=${filterParams[param]}&`
                 }
             }
-            return query.substr(0, query.length-1)
+            return {queryString: query.substr(0, query.length-1), queryObject}
         },
         initData(data) {
             this.datatable = data
@@ -265,26 +299,39 @@ export default {
         },
         async getDataFromApi(page = null, params) {
             this.filters = this.replaceParams(params)
-            const urlParams = this.getQuery() && !this.url ? this.getQuery() + (this.filters ? `&${this.filters}` : '') : (this.filters ? `${this.filters}` : '')
             this.loading = true;
-            let queryParams = page ? `?page=${page}&${urlParams}` : `?${urlParams}`;
-            queryParams += this.search ? `&search=${encodeURIComponent(this.search.toLowerCase())}` : '';
-            let url = (this.url || this.query.path) + queryParams
+            const queryParams = this.buildQueryParams({
+                ...this.getParams(),
+                page,
+                search: this.search,
+                ...this.filters.queryObject,
+            })
+            let url = (this.url || this.query.path) + '?' + queryParams
             const firstOccuranceIndex = url.search(/\?/) + 1;
             url = url.substr(0, firstOccuranceIndex) + url.slice(firstOccuranceIndex).replace(/\?/g, '&');
-            try {
-                const {data} = await axios.get(`${url}&datatable=true`);
-                this.loading = false;
-                this.initData(data)
-            }catch(e) {
-                this.loading = false
+            this.$inertia.visit(url)
+        },
+        buildQueryParams(obj, prefix) {
+            var str = [],
+                p;
+            for (p in obj) {
+                if (obj.hasOwnProperty(p)) {
+                    var k = prefix ? prefix + "[" + p + "]" : p,
+                    v = obj[p];
+                    if (v !== null && v !== undefined) {
+                        str.push(typeof v === "object" ?
+                            serialize(v, k) :
+                            k + "=" + encodeURIComponent(v)
+                        );
+                    }
+                }
             }
+            return str.join("&");
         },
         getQuery (url = window.location.href) {
-            let params = {};
-            let parser = document.createElement('a');
+            const parser = document.createElement('a');
             parser.href = url;
-            let query = parser.search.substring(1);
+            const query = parser.search.substring(1);
             return query;
         },
         getParams (url = window.location.href) {

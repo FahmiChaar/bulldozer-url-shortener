@@ -14,7 +14,8 @@ import VRuntimeTemplate from "vue3-runtime-template";
             <slot name="search-before" :selectedRows="selectedRows"></slot>
             <v-text-field v-if="!hideSearche"
                 class="pt-0"
-                v-model="search"
+                :value="search"
+                @input="onSearch"
                 append-inner-icon="search"
                 label="Rechercher"
                 hide-details
@@ -22,14 +23,20 @@ import VRuntimeTemplate from "vue3-runtime-template";
                 single-line
                 clearable
                 density="compact"
+                :disabled="!query.data || !query.data.length"
             ></v-text-field>
             <slot name="search-after" :selectedRows="selectedRows">
-                <Link v-if="!hideCreate" :href="createRoute || route('dashboard.'+datatable.inertiaView+'.create')">
-                    <v-btn color="primary" class="text-capitalize ml-3">
+                <template v-if="!hideCreate">
+                    <Link v-if="!createInModal" :href="createRoute || route('dashboard.'+datatable.inertiaView+'.create')">
+                        <v-btn color="primary" class="text-capitalize ml-3">
+                            {{ createText || 'Create' }}
+                        </v-btn>
+                        <!-- <span class="hidden md:inline"> {{ datatable.inertiaView }}</span> -->
+                    </Link>
+                    <v-btn v-else color="primary" :loading="createLoading" class="text-capitalize ml-3" @click="showCreateInModal">
                         {{ createText || 'Create' }}
                     </v-btn>
-                    <!-- <span class="hidden md:inline"> {{ datatable.inertiaView }}</span> -->
-                </Link>
+                </template>
             </slot>
         </div>
         <slot name="before-table" :selectedRows="selectedRows"></slot>
@@ -44,6 +51,19 @@ import VRuntimeTemplate from "vue3-runtime-template";
                 </tr>
             </thead>
             <tbody>
+                <tr class="text-center" v-if="!query.data || !query.data.length">
+                    <td colspan="4" class="py-3">
+                        <div class="text-xl text-gray-400">Pas de données</div>
+                        <template v-if="!hideCreate">
+                            <Link v-if="!createInModal" :href="createRoute || route('dashboard.'+datatable.inertiaView+'.create')">
+                                <v-btn color="primary" class="text-capitalize" size="x-small">
+                                    {{ createText || 'Create' }}
+                                </v-btn>
+                            </Link>
+                            <v-btn v-else class="capitalize" size="x-small" :loading="createLoading" color="primary" @click="showCreateInModal">{{ createText || 'Create' }}</v-btn>
+                        </template>
+                    </td>
+                </tr>
                 <tr v-for="item in query.data" :key="item.id" :class="[item.cssClass, {'bg-yellow-100': isItemSelected(item)}]">
                     <td v-if="selectable">
                         <v-checkbox hide-details v-if="!item.notSelectable" color="primary" v-model="selectedRows" :value="item"></v-checkbox>
@@ -59,12 +79,12 @@ import VRuntimeTemplate from "vue3-runtime-template";
                                 <v-tooltip left>
                                     <template v-slot:activator="{ on, attrs }">
                                         <template v-if="showAction('show')">
-                                            <v-btn variant="icon" color="default" v-if="showActionModal('show')" @click="showPageAsModal(route('dashboard.'+datatable.inertiaView+'.show', item.id)+(showParams || ''), item, 'show')" :loading="item.showLoading">
-                                                <v-icon v-bind="attrs" v-on="on">remove_red_eye</v-icon>
+                                            <v-btn size="small" variant="icon" color="default" v-if="showActionModal('show')" @click="showPageAsModal(route('dashboard.'+datatable.inertiaView+'.show', item.id)+(showParams || ''), item, 'show')" :loading="item.showLoading">
+                                                <v-icon size="large" v-bind="attrs" v-on="on">remove_red_eye</v-icon>
                                             </v-btn>
                                             <Link v-else :href="route('dashboard.'+datatable.inertiaView+'.show', item.id)">
-                                                <v-btn variant="icon" color="default">
-                                                    <v-icon v-bind="attrs" v-on="on">remove_red_eye</v-icon>
+                                                <v-btn size="small" variant="icon" color="default">
+                                                    <v-icon size="large" v-bind="attrs" v-on="on">remove_red_eye</v-icon>
                                                 </v-btn>
                                             </Link>
                                         </template>
@@ -74,12 +94,12 @@ import VRuntimeTemplate from "vue3-runtime-template";
                                 <v-tooltip left>
                                     <template v-slot:activator="{ on, attrs }">
                                         <template v-if="showAction('edit')">
-                                            <v-btn variant="icon" color="default" v-if="showActionModal('edit')" @click="showPageAsModal(route('dashboard.'+datatable.inertiaView+'.edit', item.id)+(editParams || ''), item, 'edit')" :loading="item.editLoading">
-                                                <v-icon v-bind="attrs" v-on="on">edit</v-icon>
+                                            <v-btn size="small" variant="icon" color="default" v-if="showActionModal('edit')" @click="showPageAsModal(route('dashboard.'+datatable.inertiaView+'.edit', item.id)+(editParams || ''), item, 'edit')" :loading="item.editLoading">
+                                                <v-icon size="large" v-bind="attrs" v-on="on">edit</v-icon>
                                             </v-btn>
                                             <Link v-else :href="route('dashboard.'+datatable.inertiaView+'.edit', item.id)">
-                                                <v-btn variant="icon" color="default">
-                                                    <v-icon v-bind="attrs" v-on="on">edit</v-icon>
+                                                <v-btn size="small" variant="icon" color="default">
+                                                    <v-icon size="large" v-bind="attrs" v-on="on">edit</v-icon>
                                                 </v-btn>
                                             </Link>
                                         </template>
@@ -88,8 +108,8 @@ import VRuntimeTemplate from "vue3-runtime-template";
                                 </v-tooltip>
                                 <v-tooltip left>
                                     <template v-slot:activator="{ on, attrs }">
-                                        <v-btn v-if="showAction('delete')" variant="icon" color="error" @click="deleteRow(item.id)">
-                                            <v-icon v-bind="attrs" v-on="on">delete</v-icon>
+                                        <v-btn size="small" v-if="showAction('delete')" variant="icon" color="error" @click="deleteRow(item.id)">
+                                            <v-icon size="large" v-bind="attrs" v-on="on">delete</v-icon>
                                         </v-btn>
                                     </template>
                                     <span>Delete</span>
@@ -118,6 +138,7 @@ export default {
         'saveOrderUrl',
         'url',
         'createRoute',
+        'createInModal',
         'createText',
         'hideSearche',
         'hideCreate',
@@ -132,6 +153,7 @@ export default {
     data() {
         return {
             loading: false,
+            createLoading: false,
             search: this.data ? this.data.searchTerm : null,
             headers: [],
             message: 'Silver',
@@ -175,6 +197,7 @@ export default {
         this.page = Number(page || 1)
         this.search = search
         this.$bus.$on('datatable:refresh', async (params)=> {
+            console.log('on refresh')
             await this.getDataFromApi(this.page, params);
             this.$bus.$emit('datatable:refresh:success')
         })
@@ -271,6 +294,11 @@ export default {
             item[loadingKey] = true
             await this.$inertia.visitInModal(url)
             item[loadingKey] = false
+        },
+        async showCreateInModal() {
+            this.createLoading = true
+            await this.$inertia.visitInModal(this.createRoute || route('dashboard.'+this.datatable.inertiaView+'.create'))
+            this.createLoading = false
         },
         replaceParams(params) {
             const filterParams = this.getParams('http://test.com?'+this.filters)

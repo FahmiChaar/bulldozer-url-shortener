@@ -1,6 +1,6 @@
 <template>
     <div class="modals-wrapper" :class="{'modals-wrapper-visible': hasModals}">
-        <transition-group name="list" tag="div" v-on:after-leave="afterCloseAnimationDone">
+        <transition-group name="modal" tag="div" v-on:after-leave="afterCloseAnimationDone">
             <div class="inner-wrapper" v-for="(modal, index) in modalStack" :key="modal.component + '-' + index">
                 <div class="backdrop" @click="closeModal(modal.component, modal.options.persist)"></div>
                 <div class="modal-container" 
@@ -171,13 +171,13 @@ export default {
 </script>
 
 <style scoped>
-    .list-enter-active, .list-leave-active {
+    .modal-enter-active, .modal-leave-active {
         transition: all .4s;
     }
-    .list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
+    .modal-enter-from, .modal-leave-to /* .modal-leave-active below version 2.1.8 */ {
         opacity: 0;
     }
-    .list-enter .modal-container, .list-leave-active .modal-container {
+    .modal-enter-from .modal-container, .modal-leave-active .modal-container {
         transform: translateY(30px);
         opacity: 0;
     }

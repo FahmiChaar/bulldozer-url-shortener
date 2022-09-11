@@ -29,7 +29,7 @@ const submit = () => {
                 v-model="form.name"
                 name="name"
                 class="w-full"
-                outlined
+                variant="outlined"
             ></v-text-field>
 
             <v-text-field
@@ -39,7 +39,7 @@ const submit = () => {
                 v-model="form.email"
                 name="email"
                 class="w-full"
-                outlined
+                variant="outlined"
             ></v-text-field>
 
             <v-text-field
@@ -49,7 +49,7 @@ const submit = () => {
                 v-model="form.password"
                 name="password"
                 class="w-full"
-                outlined
+                variant="outlined"
             ></v-text-field>
 
             <v-text-field
@@ -59,7 +59,7 @@ const submit = () => {
                 v-model="form.password_confirmation"
                 name="password_confirmation"
                 class="w-full"
-                outlined
+                variant="outlined"
             ></v-text-field>
 
             <div class="flex items-center justify-end mt-4">

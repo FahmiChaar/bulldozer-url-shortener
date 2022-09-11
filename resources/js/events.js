@@ -28,4 +28,8 @@ class Event{
     }
 }
 
-export default new Event();
+const eventEmitter = new Event()
+
+export default eventEmitter;
+
+export const useBus = () => eventEmitter

@@ -18,9 +18,10 @@ const { datatable } = defineProps(['datatable'])
                 <LaravelTable 
                     :data='datatable'
                     :actions="['show', 'delete']"
-                    createText="Crée"
+                    createText="Ajouter"
+                    :createInModal="true"
                     :actions-modal="['show']"
-                    :createRoute="route('dashboard.urls.index')"
+                    :createRoute="route('dashboard.urls.create')"
                 >
                 </LaravelTable>
             </div>

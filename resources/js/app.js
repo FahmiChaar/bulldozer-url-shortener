@@ -10,6 +10,8 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import { createVuetify } from 'vuetify'
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
+import Toast from "vue-toastification";
+import "vue-toastification/dist/index.css";
 import $bus from './events'
 import vuetifyConfig from './vuetify.config';
 
@@ -23,10 +25,21 @@ createInertiaApp({
     setup({ el, app, props, plugin }) {
         const vueApp = createApp({ render: () => h(app, props) })
         vueApp.config.globalProperties.$bus = $bus
+        vueApp.config.globalProperties.$modal = {
+            show: component => $bus.$emit('modal::show', component),
+            close: component => $bus.$emit('modal::close', component)
+        }
         vueApp.use(plugin)
             .use(ZiggyVue, Ziggy)
             .use(vuetify)
             .use(VueSweetalert2)
+            .use(Toast, {
+                transition: "Vue-Toastification__bounce",
+                maxToasts: 20,
+                newestOnTop: true,
+                timeout: 3000,
+                position: "bottom-right",
+            })
             .mount(el);
     },
 });

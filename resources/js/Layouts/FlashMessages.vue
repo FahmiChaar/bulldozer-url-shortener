@@ -8,6 +8,7 @@
   Mohamed Fahmi Chaar
 ***************** */
 
+import { useToast } from "vue-toastification";
 export default {
   watch: {
     '$page.props.flash': {
@@ -18,7 +19,8 @@ export default {
           for (let message of this.$page.props.flash) {
             messages += message.message + '\n'
           }
-          this.$toast[errorStatus](messages)
+          const toast = useToast()
+          toast[errorStatus](messages)
         }
       },
       deep: true,
@@ -30,7 +32,8 @@ export default {
           for (let key in this.$page.props.errors) {
             messages += this.$page.props.errors[key] + '\n'
           }
-          this.$toast.error(messages)
+          const toast = useToast()
+          toast.error(messages)
         }
       },
       deep: true,

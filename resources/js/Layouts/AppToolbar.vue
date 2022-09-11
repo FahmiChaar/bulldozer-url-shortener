@@ -5,7 +5,7 @@ import { Link } from '@inertiajs/inertia-vue3';
 <template>
     <v-app-bar class="app-toolbar shadow" color="white" app>
         <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
-        <Link href="/dashboard" class="d-flex router-link-active px-5">
+        <Link href="/dashboard/urls" class="d-flex router-link-active px-5">
             <img src="/assets/images/logo.png" width="25">
         </Link>
         <v-spacer></v-spacer>

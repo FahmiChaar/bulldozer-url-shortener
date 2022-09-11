@@ -29,7 +29,7 @@ const submit = () => {
 
         <form @submit.prevent="submit">
             <v-text-field
-                :label="__('dashboard.fields.email')"
+                label="Email"
                 type="email"
                 :error-messages="form.errors.email"
                 v-model="form.email"

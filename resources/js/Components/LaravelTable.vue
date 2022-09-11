@@ -40,9 +40,7 @@ import VRuntimeTemplate from "vue3-runtime-template";
             </slot>
         </div>
         <slot name="before-table" :selectedRows="selectedRows"></slot>
-        <v-table
-            class="shadow rounded-md"
-        >
+        <v-table class="shadow rounded-md">
             <thead>
                 <tr>
                     <th class="text-left" v-for="col in headers" :key="col.key">

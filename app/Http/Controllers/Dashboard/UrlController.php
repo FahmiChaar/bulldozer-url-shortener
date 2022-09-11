@@ -29,7 +29,10 @@ class UrlController extends Controller
             flash("Lien introuvable !")->warning();
             return redirect()->back();
         }
-        return Inertia::render('Urls/Show');
+        return Inertia::render('Urls/Show', [
+            'url' => $url,
+            'visits' => $url->visits
+        ]);
     }
 
     public function create() {

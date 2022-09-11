@@ -37,5 +37,10 @@ class Url extends Model
     public function user() {
         return $this->belongsTo(User::class, 'user_id');
     }
+    
+    public function visits() {
+        return $this->HasMany(VisitTracking::class, 'url_id')
+                    ->with('user');
+    }
 
 }

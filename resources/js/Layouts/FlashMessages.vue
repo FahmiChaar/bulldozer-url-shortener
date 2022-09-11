@@ -3,6 +3,11 @@
 </template>
 
 <script>
+/* *****************
+  Created by 
+  Mohamed Fahmi Chaar
+***************** */
+
 export default {
   watch: {
     '$page.props.flash': {

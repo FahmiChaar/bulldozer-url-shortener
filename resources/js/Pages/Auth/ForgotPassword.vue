@@ -1,9 +1,5 @@
 <script setup>
-import BreezeButton from '@/Components/Button.vue';
 import BreezeGuestLayout from '@/Layouts/Guest.vue';
-import BreezeInput from '@/Components/Input.vue';
-import BreezeInputError from '@/Components/InputError.vue';
-import BreezeLabel from '@/Components/Label.vue';
 import { Head, useForm } from '@inertiajs/inertia-vue3';
 
 defineProps({
@@ -24,7 +20,7 @@ const submit = () => {
         <Head title="Forgot Password" />
 
         <div class="mb-4 text-sm text-gray-600">
-            Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.
+            Mot de passe oublié? Aucun problème. Indiquez-nous simplement votre adresse e-mail et nous vous enverrons par e-mail un lien de réinitialisation de mot de passe qui vous permettra d'en choisir un nouveau.
         </div>
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
@@ -32,16 +28,20 @@ const submit = () => {
         </div>
 
         <form @submit.prevent="submit">
-            <div>
-                <BreezeLabel for="email" value="Email" />
-                <BreezeInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autofocus autocomplete="username" />
-                <BreezeInputError class="mt-2" :message="form.errors.email" />
-            </div>
+            <v-text-field
+                :label="__('dashboard.fields.email')"
+                type="email"
+                :error-messages="form.errors.email"
+                v-model="form.email"
+                name="email"
+                class="w-full"
+                variant="outlined"
+            ></v-text-field>
 
             <div class="flex items-center justify-end mt-4">
-                <BreezeButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Email Password Reset Link
-                </BreezeButton>
+                <v-btn type="submit" color="primary" class="capitalize" :loading="form.processing" :disabled="form.processing">
+                    Lien de réinitialisation du mot de passe par e-mail
+                </v-btn>
             </div>
         </form>
     </BreezeGuestLayout>

@@ -1,4 +1,12 @@
 <script setup>
+/* *****************
+    Created by 
+    Mohamed Fahmi Chaar
+
+    Note: this component is on standby mode 
+    until vuetify 3 integrate the datatable component
+***************** */
+
 import { Link } from '@inertiajs/inertia-vue3';
 </script>
 

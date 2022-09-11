@@ -1,4 +1,9 @@
 <script setup>
+/* *****************
+    Created by 
+    Mohamed Fahmi Chaar
+***************** */
+
 import { Link } from '@inertiajs/inertia-vue3';
 import VRuntimeTemplate from "vue3-runtime-template";
 </script>

@@ -77,42 +77,42 @@ import VRuntimeTemplate from "vue3-runtime-template";
                         <template v-else>
                             <template v-if="(datatable && datatable.isInertia || datatable && datatable.inertiaView) && !hideActions">
                                 <v-tooltip left>
-                                    <template v-slot:activator="{ on, attrs }">
+                                    <template v-slot:activator="{ props }">
                                         <template v-if="showAction('show')">
                                             <v-btn size="small" variant="icon" color="default" v-if="showActionModal('show')" @click="showPageAsModal(route('dashboard.'+datatable.inertiaView+'.show', item.id)+(showParams || ''), item, 'show')" :loading="item.showLoading">
-                                                <v-icon size="large" v-bind="attrs" v-on="on">remove_red_eye</v-icon>
+                                                <v-icon size="large" v-bind="props" >remove_red_eye</v-icon>
                                             </v-btn>
                                             <Link v-else :href="route('dashboard.'+datatable.inertiaView+'.show', item.id)">
                                                 <v-btn size="small" variant="icon" color="default">
-                                                    <v-icon size="large" v-bind="attrs" v-on="on">remove_red_eye</v-icon>
+                                                    <v-icon size="large" v-bind="props" >remove_red_eye</v-icon>
                                                 </v-btn>
                                             </Link>
                                         </template>
                                     </template>
-                                    <span>Show details</span>
+                                    <span>Afficher les détails</span>
                                 </v-tooltip>
                                 <v-tooltip left>
-                                    <template v-slot:activator="{ on, attrs }">
+                                    <template v-slot:activator="{ props }">
                                         <template v-if="showAction('edit')">
                                             <v-btn size="small" variant="icon" color="default" v-if="showActionModal('edit')" @click="showPageAsModal(route('dashboard.'+datatable.inertiaView+'.edit', item.id)+(editParams || ''), item, 'edit')" :loading="item.editLoading">
-                                                <v-icon size="large" v-bind="attrs" v-on="on">edit</v-icon>
+                                                <v-icon size="large" v-bind="props" >edit</v-icon>
                                             </v-btn>
                                             <Link v-else :href="route('dashboard.'+datatable.inertiaView+'.edit', item.id)">
                                                 <v-btn size="small" variant="icon" color="default">
-                                                    <v-icon size="large" v-bind="attrs" v-on="on">edit</v-icon>
+                                                    <v-icon size="large" v-bind="props" >edit</v-icon>
                                                 </v-btn>
                                             </Link>
                                         </template>
                                     </template>
-                                    <span>Edit</span>
+                                    <span>Éditer</span>
                                 </v-tooltip>
                                 <v-tooltip left>
-                                    <template v-slot:activator="{ on, attrs }">
+                                    <template v-slot:activator="{ props }">
                                         <v-btn size="small" v-if="showAction('delete')" variant="icon" color="error" @click="deleteRow(item.id)">
-                                            <v-icon size="large" v-bind="attrs" v-on="on">delete</v-icon>
+                                            <v-icon size="large" v-bind="props" >delete</v-icon>
                                         </v-btn>
                                     </template>
-                                    <span>Delete</span>
+                                    <span>Supprimer</span>
                                 </v-tooltip>
                             </template>
                             <slot name="extra-actions" :item="item"></slot>

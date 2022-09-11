@@ -17,7 +17,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
+    public $fillable = [
         'name',
         'email',
         'password',
@@ -44,5 +44,9 @@ class User extends Authenticatable
 
     public function urls() {
         return $this->hasMany(Url::class, 'user_id');
+    }
+
+    public function reatchedMaxLinks($max = 5) {
+        return $this->urls->count() === $max;
     }
 }

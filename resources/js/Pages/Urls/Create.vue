@@ -3,8 +3,12 @@ import VCardHeader from '@/Components/VCardHeader.vue'
 import { defineProps } from 'vue'
 import { Head, useForm } from '@inertiajs/inertia-vue3';
 import { useBus } from '@/events';
+import Swal from 'sweetalert2'
+import { useToast } from 'vue-toastification';
 
 const { url } = defineProps(['url', 'isModal'])
+const bus = useBus()
+const toast = useToast()
 
 const form = useForm({
     id: null,
@@ -13,13 +17,36 @@ const form = useForm({
     ...url
 });
 
-const bus = useBus() 
+const copyLinkToClipboard = (link) => {
+    if (navigator?.clipboard) {
+        navigator.clipboard.writeText(link);
+    }else {
+        const elem = document.createElement('textarea');
+        elem.value = link;
+        document.body.appendChild(elem);
+        elem.select();
+        document.execCommand('copy');
+        document.body.removeChild(elem);
+    }
+    toast.info('Lien raccourci copié dans le presse-papiers')
+}
 
 const store = () => {
     form.post(route("dashboard.urls.store"), {
-        onSuccess: () => {
+        onSuccess: async ({ props }) => {
             form.reset()
             bus.$emit('datatable:refresh')
+            console.log(props.additionalData.shortenUrl.shorten_link)
+            const shorten_link = props.additionalData.shortenUrl.shorten_link
+            const result = await Swal.fire({
+                title: 'Copier le lien raccourci ?',
+                text: shorten_link,
+                icon: 'info',
+                confirmButtonText: 'copiez-le!'
+            })
+            if (result.isConfirmed) {
+                copyLinkToClipboard(shorten_link)
+            }
         },
     });
 }

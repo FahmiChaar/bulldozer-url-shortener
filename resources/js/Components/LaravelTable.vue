@@ -41,7 +41,7 @@ import VRuntimeTemplate from "vue3-runtime-template";
         </div>
         <slot name="before-table" :selectedRows="selectedRows"></slot>
         <v-table
-            class="shadow"
+            class="shadow rounded-md"
         >
             <thead>
                 <tr>
@@ -197,7 +197,6 @@ export default {
         this.page = Number(page || 1)
         this.search = search
         this.$bus.$on('datatable:refresh', async (params)=> {
-            console.log('on refresh')
             await this.getDataFromApi(this.page, params);
             this.$bus.$emit('datatable:refresh:success')
         })

@@ -19,15 +19,19 @@ class Url extends Model
     public $datatable = ['token'];
 
     public function getFormatedCreatedAtAttribute() {
-        return Carbon::parse($this->created_at)->format('d-m-Y H:m');
+        return Carbon::parse($this->created_at)->format('d-m-Y');
     }
     
     public function getShortenLinkAttribute() {
         return url($this->token);
     }
 
-    public static function generateToken() {
-        return substr(md5(uniqid(rand(), true)),0,4);
+    public static function generateToken($tokenLength = 4) {
+        return substr(md5(uniqid(rand(), true)), 0 ,$tokenLength);
+    }
+    
+    public static function deleteLast() {
+        return static::orderBy('id', 'desc')->limit(1)->delete();
     }
 
     public function user() {

@@ -18,12 +18,15 @@ class UrlController extends Controller
      */
     public function index(UrlDataTable $urlDataTable)
     {
-        return $urlDataTable->inertiaRender('Urls/Index');
+        return $urlDataTable->inertiaRender('Urls/Index', [
+            'reatchedMaxLinks' => auth()->user()->reatchedMaxLinks()
+        ]);
     }
 
     public function show($id) {
         $url = Url::find($id);
         if (!$url) {
+            flash("Lien introuvable !")->warning();
             return redirect()->back();
         }
         return Inertia::render('Urls/Show');
@@ -35,8 +38,16 @@ class UrlController extends Controller
 
     public function store(Request $request) {
         $request->validate([ 'link' => 'required|string|url' ]);
+        if (auth()->user()->reatchedMaxLinks()) {
+            return redirect(route('dashboard.urls.index'))
+                    ->withErrors('Nombre maximum de liens atteint, Maximum 5 liens');
+        }
 
-        Url::create([
+        if (Url::count() === 20) {
+            Url::deleteLast();
+        }
+
+        $shortenUrl = Url::create([
             'link' => $request->link,
             'token' => Url::generateToken(),
             'user_id' => auth()->id()
@@ -44,6 +55,22 @@ class UrlController extends Controller
 
         flash('Le lien a été raccourci avec succès')->success();
 
+        return redirect(route('dashboard.urls.index'))->with(
+            'additionalData', ['shortenUrl' => $shortenUrl]
+        );
+    }
+
+    public function destroy($id) {
+        $url = Url::find($id);
+        if (!$url) {
+            flash("Lien introuvable !")->warning();
+            return redirect()->back();
+        }
+
+        $url->delete();
+
+        flash("Lien supprimer avec succée.")->success();
+
         return redirect(route('dashboard.urls.index'));
-    } 
+    }
 }

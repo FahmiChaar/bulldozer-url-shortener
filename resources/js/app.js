@@ -14,6 +14,7 @@ import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 import $bus from './events'
 import vuetifyConfig from './vuetify.config';
+import { i18nVue } from 'laravel-vue-i18n'
 
 const vuetify = createVuetify(vuetifyConfig)
 
@@ -39,6 +40,13 @@ createInertiaApp({
                 newestOnTop: true,
                 timeout: 3000,
                 position: "bottom-right",
+            })
+            .use(i18nVue, {
+                lang: localStorage.app_local || 'fr',
+                resolve: async lang => {
+                    const langs = import.meta.glob('../../lang/*.json');
+                    return await langs[`../../lang/${lang}.json`]();
+                }
             })
             .mount(el);
     },

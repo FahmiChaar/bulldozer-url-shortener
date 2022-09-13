@@ -9,13 +9,13 @@ import FlashMessages from '@/Layouts/FlashMessages.vue';
     <Head title="Tableau de bord" />
     <flash-messages />
     <div class="shadow bg-white rounded-lg p-8">
-        <h1 class="font-bold text-2xl text-center">Bienvenue dans mon application de raccourcissement d'url</h1>
+        <h1 class="font-bold text-2xl text-center">{{ $t("welcome.title") }}</h1>
         <p class="mt-4">
-            ceci est une application de démonstration veuillez cliquer sur le bouton ci-dessous pour commencer votre expérience
+            {{ $t('welcome.content') }}
         </p>
         <div class="text-center mt-4">
             <Link :href="route('dashboard.urls.index')">
-                <v-btn color="primary">Commencer</v-btn>
+                <v-btn color="primary">{{ $t('welcome.start') }}</v-btn>
             </Link>
         </div>
     </div>

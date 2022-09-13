@@ -1,0 +1,23 @@
+{
+    "welcome.title": "Welcome to my url shortener app",
+    "welcome.content": "this is a demo app please click the button below to start your experience",
+    "welcome.start": "Start",
+
+    "url.title": "My Links",
+    "url.link": "Original url",
+    "url.short": "Shortened URL",
+    "url.created_at": "Created at",
+    "url.reatched_max": "You have reached the maximum number of links created, you must delete links to add others",
+    "url.create_title": "Shorten a link",
+    
+    "tracking.title": "Tracking link visits",
+    "tracking.no_data": "Link not visited yet",
+    "tracking.visited_at": "Visited at",
+    "tracking.user": "User",
+    "tracking.ip": "IP Address",
+    "tracking.country": "Country",
+    "tracking.user_agent": "User Agent",
+
+    "buttons.add": "Add",
+    "buttons.save": "Save"
+}

@@ -1,0 +1,23 @@
+{
+    "welcome.title": "Bienvenue dans mon application de raccourcissement d'url",
+    "welcome.content": "ceci est une application de démonstration veuillez cliquer sur le bouton ci-dessous pour commencer votre expérience",
+    "welcome.start": "Commencer",
+
+    "url.title": "Mes Liens",
+    "url.link": "URL d'origine",
+    "url.short": "URL raccourcie",
+    "url.created_at": "Crée le",
+    "url.reatched_max": "Vous avez atteint le maximum de lien créé, vous devez supprimer des liens pour en ajouter d'autres",
+    "url.create_title": "Raccourcir un lien",
+    
+    "tracking.title": "Suivi des visites de liens",
+    "tracking.no_data": "Lien pas encore visité",
+    "tracking.visited_at": "Visitée le",
+    "tracking.user": "Utilisateur",
+    "tracking.ip": "Adresse IP",
+    "tracking.country": "Pays",
+    "tracking.user_agent": "User Agent",
+
+    "buttons.add": "Ajouter",
+    "buttons.save": "Enregistrer"
+}

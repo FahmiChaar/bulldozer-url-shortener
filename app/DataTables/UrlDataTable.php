@@ -26,19 +26,12 @@ class UrlDataTable extends VueDataTable {
         return Url::class;
     }
 
-    protected function editedColumns($item)
-    {
-        return [
-            'token' => url($item->token)
-        ];
-    }
-
     protected function getColumns() {
         return [
             ['value'=> 'id', 'text'=> 'id', 'visible'=> false],
-            ['value' => 'link', 'text' => "URL d'origine"],
-            ['value' => 'shorten_link', 'text' => 'URL raccourcie'],
-            ['value' => 'formated_created_at', 'text' => 'Crée le'],
+            ['value' => 'link', 'text' => "url.link"],
+            ['value' => 'shorten_link', 'text' => 'url.short'],
+            ['value' => 'formated_created_at', 'text' => 'url.created_at'],
             ['value' => 'actions', 'text' => 'Actions', 'sortable'=> false]
         ];
     }

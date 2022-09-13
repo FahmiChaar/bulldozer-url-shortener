@@ -44,7 +44,7 @@ import VRuntimeTemplate from "vue3-runtime-template";
             <thead>
                 <tr>
                     <th class="text-left" v-for="col in headers" :key="col.key">
-                        {{ col.text }}
+                        {{ $t(col.text) }}
                     </th>
                 </tr>
             </thead>

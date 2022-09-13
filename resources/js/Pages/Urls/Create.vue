@@ -54,12 +54,12 @@ const store = () => {
 
 <template>
     <div class="bg-white rounded-md shadow overflow-hidden">
-        <Head title="Raccourcir un lien" />
-        <VCardHeader v-if="isModal" color="primary" title="Raccourcir un lien" :showCloseModal="true" />
+        <Head :title="$t('url.create_title')" />
+        <VCardHeader v-if="isModal" color="primary" :title="$t('url.create_title')" :showCloseModal="true" />
         <form @submit.prevent="store">
             <div class="p-8">
                 <v-text-field
-                    label="Lien"
+                    :label="$('url.link')"
                     placeholder="example: https//www.google.com"
                     type="text"
                     :error-messages="form.errors.link"
@@ -68,7 +68,7 @@ const store = () => {
                     variant="outlined"
                 ></v-text-field>
                 <div class="pt-2 flex justify-start items-center">
-                    <v-btn :loading="form.processing" color="primary" type="submit" class="capitalize">Enregistrer</v-btn>
+                    <v-btn :loading="form.processing" color="primary" type="submit" class="capitalize">{{ $t('buttons.save') }}</v-btn>
                 </div>
             </div>
         </form>

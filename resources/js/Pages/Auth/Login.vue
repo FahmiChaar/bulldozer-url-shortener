@@ -62,5 +62,12 @@ const submit = () => {
                 </v-btn>
             </div>
         </form>
+        <div class="text-center mt-6">
+            <Link href="/register">
+                <v-btn class="normal-case" variant="palin" color="primary" size="small">
+                    Vous n'avez pas de compte, inscrivez-vous
+                </v-btn>
+            </Link>
+        </div>
     </BreezeGuestLayout>
 </template>

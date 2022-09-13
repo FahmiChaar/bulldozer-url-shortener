@@ -10,7 +10,7 @@ Route::redirect('/', '/dashboard/urls');
 Route::group([
     'prefix' => 'dashboard',
     'as' => 'dashboard.',
-    'middleware' => ['auth', 'verified']
+    'middleware' => ['auth']
 ], function() {
     Route::get('/home', DashboardController::class)->name('home');
     Route::resource('urls', UrlController::class);

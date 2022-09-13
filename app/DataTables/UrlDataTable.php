@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Models\Url;
+use Carbon\Carbon;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class UrlDataTable extends VueDataTable {
@@ -26,12 +27,19 @@ class UrlDataTable extends VueDataTable {
         return Url::class;
     }
 
+    protected function editedColumns($item)
+    {
+        return [
+            'created_at' => Carbon::parse($item->created_at)->format('d-m-Y H:m')
+        ];
+    }
+
     protected function getColumns() {
         return [
             ['value'=> 'id', 'text'=> 'id', 'visible'=> false],
             ['value' => 'link', 'text' => "url.link"],
             ['value' => 'shorten_link', 'text' => 'url.short'],
-            ['value' => 'formated_created_at', 'text' => 'url.created_at'],
+            ['value' => 'created_at', 'text' => 'url.created_at'],
             ['value' => 'actions', 'text' => 'Actions', 'sortable'=> false]
         ];
     }

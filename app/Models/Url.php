@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Url extends Model
@@ -13,15 +12,11 @@ class Url extends Model
     public $fillable = [
         'link',
         'token',
-        'user_id'
+        'user_id',
     ];
-    public $appends = ['formated_created_at', 'shorten_link'];
-    public $datatable = ['token'];
+    public $appends = ['shorten_link'];
+    public $datatable = ['token', 'created_at'];
 
-    public function getFormatedCreatedAtAttribute() {
-        return Carbon::parse($this->created_at)->format('d-m-Y');
-    }
-    
     public function getShortenLinkAttribute() {
         return url($this->token);
     }

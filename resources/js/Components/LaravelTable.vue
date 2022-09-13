@@ -51,7 +51,7 @@ import VRuntimeTemplate from "vue3-runtime-template";
             <tbody>
                 <tr class="text-center" v-if="!query.data || !query.data.length">
                     <td colspan="4" class="py-3">
-                        <div class="text-xl text-gray-400">Pas de données</div>
+                        <div class="text-xl text-gray-400">{{ $t('datatable.no_data') }}</div>
                         <template v-if="!hideCreate">
                             <Link v-if="!createInModal" :href="createRoute || route('dashboard.'+datatable.inertiaView+'.create')">
                                 <v-btn color="primary" class="text-capitalize" size="x-small">

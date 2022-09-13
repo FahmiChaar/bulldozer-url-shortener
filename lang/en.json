@@ -19,5 +19,7 @@
     "tracking.user_agent": "User Agent",
 
     "buttons.add": "Add",
-    "buttons.save": "Save"
+    "buttons.save": "Save",
+
+    "datatable.no_data": "No data"
 }

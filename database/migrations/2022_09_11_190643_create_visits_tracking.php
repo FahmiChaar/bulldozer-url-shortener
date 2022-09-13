@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('visits_tracking', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('url_id')->constrained('urls');
-            $table->foreignId('user_id')->nullable()->constrained('users');
+            $table->foreignId('url_id')->constrained('urls')->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->ipAddress('ip');
             $table->string('country');
             $table->text('user_agent');

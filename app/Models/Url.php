@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Url extends Model
@@ -27,6 +28,10 @@ class Url extends Model
     
     public static function deleteLast() {
         return static::orderBy('id', 'desc')->limit(1)->delete();
+    }
+
+    public static function deleteOlderThanOneDay() {
+        return static::where('created_at', '<', Carbon::yesterday())->delete();
     }
 
     public function user() {

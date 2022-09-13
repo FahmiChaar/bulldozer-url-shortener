@@ -59,7 +59,7 @@ const store = () => {
         <form @submit.prevent="store">
             <div class="p-8">
                 <v-text-field
-                    :label="$('url.link')"
+                    :label="$t('url.link')"
                     placeholder="example: https//www.google.com"
                     type="text"
                     :error-messages="form.errors.link"
